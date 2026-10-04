@@ -1,0 +1,38 @@
+name: Unzip and build
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip project
+        run: unzip -o forex_signals_project.zip
+      - uses: actions/setup-java@v4
+        with: { distribution: "zulu", java-version: "17" }
+      - uses: subosito/flutter-action@v2
+        with: { channel: "stable", flutter-version: ">=3.44.0", cache: true }
+      - name: Install dependencies
+        working-directory: forex_signals
+        run: flutter pub get
+      - name: Analyze
+        working-directory: forex_signals
+        run: flutter analyze --no-fatal-infos
+      - name: Tests
+        working-directory: forex_signals
+        run: flutter test
+      - name: Build debug APK
+        working-directory: forex_signals
+        run: flutter build apk --debug
+      - name: Build release APK
+        working-directory: forex_signals
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: forex-signals-apks
+          path: |
+            forex_signals/build/app/outputs/flutter-apk/app-debug.apk
+            forex_signals/build/app/outputs/flutter-apk/app-release.apk
