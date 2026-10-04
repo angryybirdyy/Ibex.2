@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: "zulu", java-version: "17" }
       - uses: subosito/flutter-action@v2
-        with: { channel: "stable", flutter-version: ">=3.44.0", cache: true }
+        with: { channel: "stable", cache: true }
       - name: Install dependencies
         working-directory: forex_signals
         run: flutter pub get
